@@ -118,6 +118,7 @@ namespace CapaDatos
                     Mensaje = cmd.Parameters["Mensaje"].Value.ToString();
                 }
             }
+
             catch (Exception ex)
             {
                 resultado = false;
@@ -142,6 +143,7 @@ namespace CapaDatos
                     resultado = cmd.ExecuteNonQuery() > 0 ? true : false;
                 }
             }
+
             catch (Exception ex)
             {
                 resultado = false;
