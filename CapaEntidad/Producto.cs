@@ -15,15 +15,15 @@ namespace CapaEntidad
         public Categoria oCategoria { get; set; }
         public decimal PRO_PRECIO { get; set; }
 
-        //public string PrecioTexto { get; set; }
+        public string PrecioTexto { get; set; }
 
         public int PRO_STOCK { get; set; }
         public string PRO_RUTAIMAGEN { get; set; }
         public string PRO_NOMBREIMAGEN { get; set; }
         public bool PRO_ACTIVO { get; set; }
 
-        //public string Base64 { get; set; }
+        public string Base64 { get; set; }
 
-        //public string Extension { get; set; }
+        public string Extension { get; set; }
     }
 }
