@@ -58,7 +58,6 @@
 </div>
 
 <!-- esto es una prueba para ver si jalan los cambios en GitHub -->
-<!-- SI TE APARECE EL CAMBIO? -->
 <div class="card mb-4">
     <div class="card-header">
         <i class="fas fa-tags me-1"></i>
@@ -133,3 +132,90 @@
 
     </div>
 </div>
+
+@section scripts{
+
+    <script>
+
+
+        var tabladata;
+
+        $(document).ready(function () {
+
+
+            $("#txtfechainicio").datepicker({dateFormat : 'dd/mm/yy'}).datepicker('setDate',new Date())
+            $("#txtfechafin").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date())
+
+
+             jQuery.ajax({
+                url: '@Url.Action("VistaDashBoard", "Home")',
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    var objeto = data.resultado;
+
+                    $("#totalcliente").text(objeto.TotalCliente)
+                    $("#totalventa").text(objeto.TotalVenta)
+                    $("#totalproducto").text(objeto.TotalProducto)
+
+                }
+             });
+
+        // fechainicio,string fechafin,string idtransaccion
+
+            var Url = '@Url.Action("ListaReporte", "Home")' +
+            "?fechainicio=" + $("#txtfechainicio").val() +
+            "&fechafin=" + $("#txtfechafin").val() +
+            "&idtransaccion=" + $("#txtidtransaccion").val()
+
+
+            tabladata = $("#tabla").DataTable({
+                responsive: true,
+                ordering: false,
+                "ajax": {
+                    url: Url,
+                    type: "GET",
+                    dataType: "json"
+                },
+                "columns": [
+                    {"data":"FechaVenta"},
+                    {"data":"Cliente"},
+                    {"data":"Producto"},
+                    {"data":"Precio"},
+                    {"data":"Cantidad"},
+                    {"data":"Total"},
+                    {"data":"IdTransaccion"}
+                ],
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"
+                }
+
+            });
+
+
+        })
+
+        $("#btnbuscar").on("click", function () {
+
+             var nueva_url = '@Url.Action("ListaReporte", "Home")' +
+            "?fechainicio=" + $("#txtfechainicio").val() +
+            "&fechafin=" + $("#txtfechafin").val() +
+                "&idtransaccion=" + $("#txtidtransaccion").val()
+
+
+            tabladata.ajax.url(nueva_url).load();
+
+        })
+
+
+
+
+
+    </script>
+
+
+
+
+}
