@@ -163,7 +163,7 @@
                 }
              });
 
-        // fechainicio,string fechafin,string idtransaccion
+        // fechainicio,string fechafin,string idtransaccion del homecontroller
 
             var Url = '@Url.Action("ListaReporte", "Home")' +
             "?fechainicio=" + $("#txtfechainicio").val() +
@@ -179,6 +179,7 @@
                     type: "GET",
                     dataType: "json"
                 },
+                // columnas creadas en el procedimiento de almacenado sp_ReporteVentas
                 "columns": [
                     {"data":"FechaVenta"},
                     {"data":"Cliente"},
