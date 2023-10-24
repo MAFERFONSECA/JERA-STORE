@@ -51,7 +51,7 @@ namespace CapaPresentacionAdmin.Controllers
                 }
 
 
-                // FormsAuthentication.SetAuthCookie(oUsuario.USU_CORREO, false);
+                FormsAuthentication.SetAuthCookie(oUsuario.USU_CORREO, false);
 
                 ViewBag.Error = null;
 
@@ -104,6 +104,51 @@ namespace CapaPresentacionAdmin.Controllers
                 ViewBag.Error = mensaje;
                 return View();
             }
+
+        }
+
+
+        [HttpPost]
+        public ActionResult Reestablecer(string correo)
+        {
+
+            Usuario ousurio = new Usuario();
+
+            ousurio = new CN_Usuarios().Listar().Where(item => item.USU_CORREO == correo).FirstOrDefault();
+
+            if (ousurio == null)
+            {
+                ViewBag.Error = "No se encontro un usuario relacionado a ese correo";
+                return View();
+            }
+
+
+            string mensaje = string.Empty;
+            bool respuesta = new CN_Usuarios().ReestablecerClave(ousurio.USU_ID, correo, out mensaje);
+
+            if (respuesta)
+            {
+
+                ViewBag.Error = null;
+                return RedirectToAction("Index", "Acceso");
+
+            }
+            else
+            {
+
+                ViewBag.Error = mensaje;
+                return View();
+            }
+
+
+
+        }
+
+        public ActionResult CerrarSesion()
+        {
+
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Index", "Acceso");
 
         }
     }
