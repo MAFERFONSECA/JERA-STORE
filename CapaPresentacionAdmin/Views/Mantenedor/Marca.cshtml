@@ -172,61 +172,57 @@
 
 
 
-        $("#tabla tbody").on("click", '.btn-eliminar', function () {
+        $("#tabla tbody").on("click", '.btn-eliminar', function ()
+        {
+         var marcaseleccionada = $(this).closest("tr");
+           if ($(marcaseleccionada).hasClass('child'))
+           {
+                marcaseleccionada = $(marcaseleccionada).prev();
+           }
 
-            var marcaseleccionada = $(this).closest("tr");
+           var data = tabladata.row(marcaseleccionada).data();
 
-            var data = tabladata.row(marcaseleccionada).data();
-
-            swal({
-                title: "¿Esta Seguro?",
-                text: "¿Desea eliminar la marca?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "btn-primary",
-                confirmButtonText: "Si",
-                cancelButtonText: "No",
-                closeOnConfirm: true
-            },
-            function () {
-                     jQuery.ajax({
-                        url: '@Url.Action("EliminarMarca", "Mantenedor")',
-                        type: "POST",
-                        data: JSON.stringify({ id: data.MAR_ID }),
-                        dataType: "json",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (data) {
-
-                            console.log(data.resultado)
-
-                            if (data.resultado) {
-
-                                tabladata.row(marcaseleccionada).remove().draw();
-                            } else {
-                                console.log(data.mensaje)
-
-                                setTimeout(function () {
-                                    swal("No se pudo eliminar", data.mensaje, "error");
-                                }, 200);
-
-                            }
-
-
-                        },
-                        error: function (error) {
-                            console.log(error)
-                        }
-                    });
-
-
-
-            });
-
-
-
-            console.log(data);
-
-        })
+        swal(
+        {
+            title: "¿Está seguro?",
+            text: "¿Desea eliminar la marca?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-primary",
+            confirmButtonText: "Sí",
+            cancelButtonText: "No",
+            closeOnConfirm: true
+        },
+           function ()
+           {
+           jQuery.ajax({
+              url: '@Url.Action("EliminarMarca", "Mantenedor")',
+              type: "POST",
+              data: JSON.stringify({ id: data.MAR_ID }),
+              dataType: "json",
+              contentType: "application/json; charset=utf-8",
+               success: function (data)
+               {
+                 console.log(data.resultado);
+                  if (data.resultado)
+                  {
+                        tabladata.row(marcaseleccionada).remove().draw();
+                  } else
+                  {
+                        console.log(data.mensaje);
+                      setTimeout(function ()
+                      {
+                         swal("No se pudo eliminar", data.mensaje, "error");
+                      }, 200);
+                  }
+               },
+               error: function (error)
+               {
+                  console.log(error);
+               }
+           });
+           });
+        });
 
         function Guardar() {
 
