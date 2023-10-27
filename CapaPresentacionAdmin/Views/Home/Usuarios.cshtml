@@ -192,48 +192,49 @@
 
 
 
-        $("#tabla tbody").on("click", '.btn-eliminar', function () {
-    var usuarioseleccionado = $(this).closest("tr");
-           if ($(usuarioseleccionado).hasClass('child')) {
-               usuarioseleccionado = $(usuarioseleccionado).prev();
-    }
+        $("#tabla tbody").on("click", '.btn-eliminar', function ()
+        {
+        var usuarioseleccionado = $(this).closest("tr");
+               if ($(usuarioseleccionado).hasClass('child')) {
+                   usuarioseleccionado = $(usuarioseleccionado).prev();
+               }
 
-           var data = tabladata.row(usuarioseleccionado).data();
+               var data = tabladata.row(usuarioseleccionado).data();
 
-    swal({
-        title: "¿Está seguro?",
-        text: "¿Desea eliminar el usuario?",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-primary",
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-        closeOnConfirm: true
-    },
-    function () {
-        jQuery.ajax({
-            url: '@Url.Action("EliminarUsuario", "Home")',
-            type: "POST",
-            data: JSON.stringify({ id: data.USU_ID }),
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-                console.log(data.resultado);
-                if (data.resultado) {
-                    tabladata.row(usuarioseleccionado).remove().draw();
-                } else {
-                    console.log(data.mensaje);
-                    setTimeout(function () {
-                        swal("No se pudo eliminar", data.mensaje, "error");
-                    }, 200);
-                }
-            },
-            error: function (error) {
-                console.log(error);
-            }
+        swal({
+            title: "¿Está seguro?",
+            text: "¿Desea eliminar el usuario?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-primary",
+            confirmButtonText: "Sí",
+            cancelButtonText: "No",
+            closeOnConfirm: true
+        },
+            function ()
+            {
+            jQuery.ajax({
+                url: '@Url.Action("EliminarUsuario", "Home")',
+                type: "POST",
+                data: JSON.stringify({ id: data.USU_ID }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data.resultado);
+                    if (data.resultado) {
+                        tabladata.row(usuarioseleccionado).remove().draw();
+                    } else {
+                        console.log(data.mensaje);
+                        setTimeout(function () {
+                            swal("No se pudo eliminar", data.mensaje, "error");
+                        }, 200);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }});
+            });
         });
-    });
-});
 
         function Guardar() {
 
