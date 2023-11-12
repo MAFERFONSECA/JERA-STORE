@@ -6,6 +6,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace CapaDatos
 {
@@ -145,6 +147,53 @@ namespace CapaDatos
                 Mensaje = ex.Message;
             }
             return resultado;
+        }
+
+
+        public List<Marca> ListarMarcaporCategoria( int idcategoria)
+        {
+
+            List<Marca> lista = new List<Marca>();
+
+            try
+            {
+                using (SqlConnection oconexion = new SqlConnection(Conexion.cn))
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    sb.AppendLine("select distinct m.MAR_ID,m.MAR_DESCRIPCION from PRODUCTO p");
+                    sb.AppendLine("inner join CATEGORIA c on c.CAT_ID = p.CAT_ID");
+                    sb.AppendLine("inner join MARCA m on m.MAR_ID = p.MAR_ID and m.MAR_ACTIVO = 1");
+                    sb.AppendLine("where c.CAT_ID = iif(@CAT_ID = 0, c.CAT_ID, @CAT_ID)");
+
+
+                    SqlCommand cmd = new SqlCommand(sb.ToString(), oconexion);
+                    cmd.Parameters.AddWithValue("@CAT_ID",idcategoria);
+                    cmd.CommandType = CommandType.Text;
+
+                    oconexion.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            lista.Add(new Marca()
+                            {
+                                MAR_ID = Convert.ToInt32(dr["MAR_ID"]),
+                                MAR_DESCRIPCION = dr["MAR_DESCRIPCION"].ToString()
+                            });
+                        }
+                    }
+                }
+
+            }
+            catch
+            {
+                lista = new List<Marca>();
+            }
+
+            return lista;
+
         }
     }
 }
