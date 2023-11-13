@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using CapaEntidad;
 using CapaNegocio;
 using System.IO;
+using System.Web.Services.Description;
 
 namespace CapaPresentacionTienda.Controllers
 {
@@ -17,6 +18,22 @@ namespace CapaPresentacionTienda.Controllers
         {
             return View();
         }
+
+        public ActionResult DetalleProducto(int idproducto = 0)
+        {
+            Producto oProducto = new Producto();
+            bool conversion;
+            oProducto = new CN_Producto().Listar().Where(p => p.PRO_ID == idproducto).FirstOrDefault();
+
+            if(oProducto != null)
+            {
+                oProducto.Base64 = CN_Recursos.ConvertirBase64(Path.Combine(oProducto.PRO_RUTAIMAGEN, oProducto.PRO_NOMBREIMAGEN), out conversion);
+                oProducto.Extension = Path.GetExtension(oProducto.PRO_NOMBREIMAGEN);
+            }
+
+            return View(oProducto);
+        }
+
         [HttpGet] 
         public JsonResult ListaCategorias()
         {
@@ -71,5 +88,38 @@ namespace CapaPresentacionTienda.Controllers
 
         }
 
+
+        [HttpPost]
+        public JsonResult AgregarCarrito (int idproducto)
+        {
+            int idcliente = ((Cliente)Session["Cliente"]).CLI_ID;
+
+            bool existe = new CN_Carrito().ExisteCarrito(idcliente, idproducto);
+
+            bool respuesta = false;
+
+            string mensaje = string.Empty;
+
+            if (existe)
+            {
+                mensaje = "El producto ya existe en el carrito";
+            }
+            else
+            {
+                respuesta = new CN_Carrito().OperacionCarrito(idcliente,idproducto,true, out mensaje);
+            }
+
+            return Json(new { respuesta = respuesta, mensaje = mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpGet]
+        public JsonResult CantidadEnCarrito()
+        {
+            int idcliente = ((Cliente)Session["Cliente"]).CLI_ID;
+            int cantidad = new CN_Carrito().CantidadEnCarrito(idcliente);
+            return Json(new { cantidad = cantidad }, JsonRequestBehavior.AllowGet);
+
+        }
     }
 }
