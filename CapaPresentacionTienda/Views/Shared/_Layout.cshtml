@@ -33,14 +33,14 @@
 
                     @if (Session["Cliente"] == null)
                     {
-                        <a class="btn btn-outline-dark" aria-current="page" href="@Url.Action("Index","Acceso")"><i class="fas fa-sign-out-alt me-1"></i>Iniciar Sesion</a>
+                        <a class="btn btn-outline-danger" aria-current="page" href="@Url.Action("Index","Acceso")"><i class="fas fa-sign-out-alt me-1"></i>Iniciar Sesion</a>
                     }
                     else
                     {
                         <a class="btn btn-outline-danger" href="@Url.Action("Carrito","Tienda")">
                             <i class="fas fa-shopping-cart me-1"></i>
-                            Cart
-                            <span class="badge bg-danger text-white ms-1 rounded-pill">0</span>
+                            Carrito
+                            <span class="badge bg-danger text-white ms-1 rounded-pill" id="cantidadcarrito">0</span>
                         </a>
 
                         <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0">
@@ -71,5 +71,37 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
+    <script>
+
+
+
+        $(document).ready(function () {
+
+            MostrarCantidadCarrito();
+
+        })
+
+
+
+        function MostrarCantidadCarrito() {
+
+            if ($("#cantidadcarrito").length > 0) {
+
+                jQuery.ajax({
+                    url:'@Url.Action("CantidadEnCarrito", "Tienda")',
+                    type:"GET",
+                    dataType:"json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        $("#cantidadcarrito").text(data.cantidad)
+
+                    }
+                });
+            }
+        }
+    </script>
+
 </body>
 </html>

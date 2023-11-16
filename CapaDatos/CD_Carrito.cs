@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CapaEntidad;
 using System.Data.SqlClient;
 using System.Data;
+using System.Globalization;
 
 namespace CapaDatos
 {
@@ -77,7 +78,7 @@ namespace CapaDatos
 
 
 
-        //
+        
 
         public int CantidadEnCarrito(int idcliente)
         {
@@ -100,6 +101,92 @@ namespace CapaDatos
             }
             return resultado;
         }
+
+
+
+        public List<Carrito> ListarProducto(int idcliente)
+        {
+
+            List<Carrito> lista = new List<Carrito>();
+
+            try
+            {
+                using (SqlConnection oconexion = new SqlConnection(Conexion.cn))
+                {
+
+                    string query = "select * from fn_obtenerCarritoCliente(@CLI_ID)";
+
+
+                    SqlCommand cmd = new SqlCommand(query.ToString(), oconexion);
+                    cmd.Parameters.AddWithValue("@CLI_ID", idcliente);
+                    cmd.CommandType = CommandType.Text;
+
+                    oconexion.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            lista.Add(new Carrito()
+                            {
+
+                                oProducto = new Producto()
+                                {
+
+                                    PRO_ID = Convert.ToInt32(dr["PRO_ID"]),
+                                    PRO_NOMBRE = dr["PRO_NOMBRE"].ToString(),
+                                    PRO_PRECIO = Convert.ToDecimal(dr["PRO_PRECIO"], new CultureInfo("es-MX")),
+                                    PRO_RUTAIMAGEN = dr["PRO_RUTAIMAGEN"].ToString(),
+                                    PRO_NOMBREIMAGEN = dr["PRO_NOMBREIMAGEN"].ToString(),
+                                    oMarca = new Marca() { MAR_DESCRIPCION= dr["DesMarca"].ToString() }
+                                },
+                                CARR_CANTIDAD = Convert.ToInt32(dr[" CARR_CANTIDAD "])
+
+
+                            });
+                        }
+                    }
+                }
+
+            }
+            catch
+            {
+                lista = new List<Carrito>();
+            }
+
+            return lista;
+
+        }
+
+
+        public bool EliminarCarrito(int idcliente, int idproducto)
+        {
+            bool resultado = true;
+
+            try
+            {
+                using (SqlConnection oconexion = new SqlConnection(Conexion.cn))
+                {
+                    SqlCommand cmd = new SqlCommand("sp_EliminarCarrito", oconexion);
+                    cmd.Parameters.AddWithValue("CLI_ID", idcliente);
+                    cmd.Parameters.AddWithValue("PRO_ID", idproducto);
+                    cmd.Parameters.Add("Resultado", SqlDbType.Bit).Direction = ParameterDirection.Output;
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    oconexion.Open();
+
+                    cmd.ExecuteNonQuery();
+
+                    resultado = Convert.ToBoolean(cmd.Parameters["Resultado"].Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+            }
+            return resultado;
+        }
+
 
 
 

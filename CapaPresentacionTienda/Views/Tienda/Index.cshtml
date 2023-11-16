@@ -26,7 +26,7 @@
                     <div class="col-sm-12">
                         <div class="card">
                             <div class="card-header bg-danger text-white">
-                                Categorias
+                                Categorías
                             </div>
                             <div id="contenedor_categoria" class="card-body">
 
@@ -53,8 +53,8 @@
                 <div class="row mb-3">
                     <div class="col-sm-12">
                         <div class="d-grid gap-2">
-                            <button id="btnaplicarfiltro" class="btn btn-outline-dark btn-block" type="button">
-                                <i class="fas fa-filter"></i>Aplicar Filtros
+                            <button id="btnaplicarfiltro" class="btn btn-outline-danger btn-block" type="button">
+                                <i class="fas fa-filter"></i>Filtrar
                             </button>
 
                         </div>
@@ -256,7 +256,7 @@
 
                                  ),
                                   $("<div>").addClass("card-footer p-2 pt-0 border-top-0 bg-transparent").append(
-                                      $("<div>").addClass("d-grid gap_2").append(
+                                      $("<div>").addClass("d-grid gap-2").append(
 
 
                                              @if (Session["Cliente"] != null)
@@ -303,6 +303,52 @@
             MostrarProductos(_idcategoria, _idmarca)
         })
 
+
+        $(document).on("click", "button.agregarcarrito", function () {
+
+            console.log($(this).data("idproducto"))
+
+
+            jQuery.ajax({
+                url: '@Url.Action("AgregarCarrito", "Tienda")',
+                type: "POST",
+                data: JSON.stringify({ idproducto: $(this).data("idproducto") }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data.respuesta) {
+
+                        MostrarCantidadCarrito();
+
+                        swal({
+
+                            title: "Agregado al Carrito",
+                            text: "¿Desea ir al Carrito?",
+                            type: "success",
+                            showCancelButton: true,
+                            confirmButtonClass: "btn-primary",
+                            confirmButtonText: "Si",
+                            cancelButtonText: "No",
+                            closeOnConfirm: true
+
+
+                        }, function () {
+
+                            window.location.href = '@Url.Action("Carrito","Tienda")'
+
+                        })
+                    } else {
+                        swal("", data.mensaje, "warning");
+                    }
+
+                }
+            });
+
+
+
+
+        })
 
 
 
