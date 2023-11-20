@@ -8,7 +8,7 @@ namespace CapaEntidad
 {
     public class Colonia
     {
-        public int COL_ID { get; set; }
+        public string COL_ID { get; set; }
         public string COL_DESCRIPCION { get; set; }
     }
 }

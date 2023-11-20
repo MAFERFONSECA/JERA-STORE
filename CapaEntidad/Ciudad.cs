@@ -8,7 +8,7 @@ namespace CapaEntidad
 {
     public class Ciudad
     {
-        public int CIU_ID { get; set; }
+        public string CIU_ID { get; set; }
         public string CIU_DESCRIPCION { get; set; }
     }
 }

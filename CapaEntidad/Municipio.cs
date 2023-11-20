@@ -8,7 +8,7 @@ namespace CapaEntidad
 {
     public class Municipio
     {
-        public int MUN_ID { get; set; }
+        public string MUN_ID { get; set; }
         public string MUN_DESCRIPCION { get; set; }
     }
 }
