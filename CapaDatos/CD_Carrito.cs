@@ -140,7 +140,7 @@ namespace CapaDatos
                                     PRO_NOMBREIMAGEN = dr["PRO_NOMBREIMAGEN"].ToString(),
                                     oMarca = new Marca() { MAR_DESCRIPCION= dr["DesMarca"].ToString() }
                                 },
-                                CARR_CANTIDAD = Convert.ToInt32(dr[" CARR_CANTIDAD "])
+                                CARR_CANTIDAD = Convert.ToInt32(dr["CARR_CANTIDAD"])
 
 
                             });
