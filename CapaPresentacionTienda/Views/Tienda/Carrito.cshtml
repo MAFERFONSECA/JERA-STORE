@@ -106,7 +106,7 @@
 
                                         <div class="mb-2">
                                             <label for="exampleInputEmail1" class="form-label">Referencias:</label>
-                                            <input type="text" class="form-control form-control-sm" id="txtreferencias" autocomplete="off">
+                                            <input type="text" class="form-control form-control-sm" id="txtdireccion" autocomplete="off">
                                         </div>
 
                                         <div class="mb-3">
@@ -452,6 +452,70 @@
 
 
           })
+
+
+        function RealizarPago() {
+
+            if (parseInt($("#cantidadcarrito").text()) == 0) {
+
+                setTimeout(function () {
+                    swal("", "No existen productos en el carrito", "warning");
+                }, 1000);
+                return
+            }
+            if ($("#cbocolonia").val() == null || $("#txtnombrecontacto").val() == "" || $("#txtdireccion").val() == "" || $("#txttelefono").val() == "") {
+                setTimeout(function () {
+                    swal("", "Debe completar los datos del envio", "warning");
+                }, 1000);
+                return
+            }
+
+            var venta = {
+                VEN_TOTALPRODUCTO: $("input.input-cantidad").length,
+                VEN_MONTOTOTAL: 0,
+                VEN_CONTACTO: $("#txtnombrecontacto").val(),
+                COL_ID: $("#cbocolonia").val(),
+                VEN_TELEFONO: $("#txttelefono").val(),
+                VEN_DIRECCION: $("#txtdireccion").val()
+            }
+
+            var lista_carrito = [];
+
+            $("input.input-cantidad").each(function (i) {
+
+                var producto = $(this).data("oProducto");
+                var cantidad = parseFloat($(this).val())
+
+                lista_carrito.push({
+                    oProducto: producto,
+                    CARR_CANTIDAD : cantidad
+                })
+
+            })
+
+            jQuery.ajax({
+                url: '@Url.Action("ProcesarPago", "Tienda")',
+                type: "POST",
+                data: JSON.stringify({ oListaCarrito: lista_carrito, oVenta: venta }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    $.LoadingOverlay("hide")
+
+                    if (data.Status) {
+
+                        window.location.href = data.Link;
+                    } else {
+                        swal("", "Vuelva a intentarlo mas tarde", "warning");
+                    }
+                },
+                beforeSend: function () { $.LoadingOverlay("show")},
+                error: function (error) { $.LoadingOverlay("hide") }
+
+            });
+
+        }
 
 
 
