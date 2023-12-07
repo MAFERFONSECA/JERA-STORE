@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace CapaDatos
 {
@@ -26,8 +27,8 @@ namespace CapaDatos
                     cmd.Parameters.AddWithValue("VEN_CONTACTO", obj.VEN_CONTACTO);
                     cmd.Parameters.AddWithValue("COL_ID", obj.COL_ID);
                     cmd.Parameters.AddWithValue("VEN_TELEFONO", obj.VEN_TELEFONO);
-                    cmd.Parameters.AddWithValue("VEN_DIRECCION", obj.VEN_IDTRANSACCION);
-                    cmd.Parameters.AddWithValue("VEN_IDTRANSACCION", obj.COL_ID);
+                    cmd.Parameters.AddWithValue("VEN_DIRECCION", obj.VEN_DIRECCION);
+                    cmd.Parameters.AddWithValue("VEN_IDTRANSACCION", obj.VEN_IDTRANSACCION);
                     cmd.Parameters.AddWithValue("DETALLEVENTA", DetalleVenta);
                     cmd.Parameters.Add("Resultado", SqlDbType.Bit).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
@@ -48,6 +49,63 @@ namespace CapaDatos
                 Mensaje = ex.Message;
             }
             return respuesta;
+        }
+
+
+        public List<DetalleVenta> ListarCompras(int idcliente)
+        {
+
+            List<DetalleVenta> lista = new List<DetalleVenta>();
+
+            try
+            {
+                using (SqlConnection oconexion = new SqlConnection(Conexion.cn))
+                {
+
+                    string query = "select * from fn_ListarCompra(@idcliente)";
+
+
+                    SqlCommand cmd = new SqlCommand(query.ToString(), oconexion);
+                    cmd.Parameters.AddWithValue("@idcliente", idcliente);
+                    cmd.CommandType = CommandType.Text;
+
+                    oconexion.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            lista.Add(new DetalleVenta()
+                            {
+
+                                oProducto = new Producto()
+                                {
+
+                                    PRO_NOMBRE = dr["PRO_NOMBRE"].ToString(),
+                                    PRO_PRECIO = Convert.ToDecimal(dr["PRO_PRECIO"], new CultureInfo("es-MX")),
+                                    PRO_RUTAIMAGEN = dr["PRO_RUTAIMAGEN"].ToString(),
+                                    PRO_NOMBREIMAGEN = dr["PRO_NOMBREIMAGEN"].ToString(),
+                                },
+                                DETV_CANTIDAD = Convert.ToInt32(dr["DETV_CANTIDAD"]),
+                                DETV_TOTAL = Convert.ToDecimal(dr["DETV_TOTAL"],new CultureInfo("es-MX")),
+                                VEN_IDTRANSACCION = dr["VEN_IDTRANSACCION"].ToString(),
+
+
+
+
+                            });
+                        }
+                    }
+                }
+
+            }
+            catch
+            {
+                lista = new List<DetalleVenta>();
+            }
+
+            return lista;
+
         }
 
     }
